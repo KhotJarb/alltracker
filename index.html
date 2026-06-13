@@ -246,18 +246,47 @@
         }
 
         /* ══════════════════════════════════════════════════════════════
-           APP CONTAINERS
+           APP CONTAINERS — Absolute-Layered SPA (Zero Layout Shift)
+           Views are position:absolute so transitions never trigger reflow
            ══════════════════════════════════════════════════════════════ */
         .app-container {
             position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 60px);
         }
 
         .app-view {
-            display: none;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            will-change: transform, opacity;
         }
 
         .app-view.active {
-            display: block;
+            position: relative;
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- Skeleton Loader (ghost UI during transitions) --- */
+        .skeleton-bar {
+            height: 52px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: skeletonShimmer 1.2s ease-in-out infinite;
+            margin-bottom: 8px;
+        }
+
+        @keyframes skeletonShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
 
@@ -2277,6 +2306,18 @@
                 -webkit-backdrop-filter: none !important;
                 backdrop-filter: none !important;
             }
+
+            /* --- MOBILE PAINT REDUCTION: strip expensive masks --- */
+            #workout-app .session-card,
+            #workout-app .log-ex-card {
+                border-radius: 10px;
+            }
+
+            /* Freeze skeleton shimmer on mobile */
+            .skeleton-bar {
+                animation: none;
+                background: rgba(255, 255, 255, 0.04);
+            }
         }
 
         /* Ultra-low-end devices: prefers-reduced-motion */
@@ -2843,7 +2884,7 @@
         const newView = document.getElementById(app === 'water' ? 'water-app' : 'workout-app');
         const slider = document.getElementById('segSlider');
 
-        // Update segmented control
+        // Update segmented control (lightweight — no reflow)
         document.getElementById('segWater').classList.toggle('active', app === 'water');
         document.getElementById('segWorkout').classList.toggle('active', app === 'workout');
         slider.classList.toggle('workout', app === 'workout');
@@ -2851,18 +2892,20 @@
         // Update body theme class for background orb colors
         document.body.classList.toggle('theme-workout', app === 'workout');
 
-        // ANIMATION FIRST, RENDER SECOND — decouple heavy DOM from transition
+        // STEP 1: Fade out old view (position:absolute — zero reflow)
         gsap.to(oldView, {
             opacity: 0,
             y: 15,
             duration: 0.2,
             ease: 'power2.in',
             onComplete: () => {
+                // STEP 2: Swap layers — old goes absolute, new goes relative
                 oldView.classList.remove('active');
-                oldView.style.opacity = '';
-                oldView.style.transform = '';
+                oldView.style.cssText = '';
 
                 newView.classList.add('active');
+
+                // STEP 3: Fade in new view (empty/cached content)
                 gsap.fromTo(newView, {
                     opacity: 0,
                     y: -15
@@ -2870,13 +2913,16 @@
                     opacity: 1,
                     y: 0,
                     duration: 0.3,
-                    ease: 'power2.out'
-                });
-
-                // Defer heavy list render to AFTER fade-in starts (next idle frame)
-                requestAnimationFrame(() => {
-                    if (app === 'water') waterRender();
-                    if (app === 'workout') renderLogPage();
+                    ease: 'power2.out',
+                    clearProps: 'transform',
+                    onComplete: () => {
+                        // STEP 4: Render content AFTER animation is fully done
+                        // This ensures zero main thread blocking during transition
+                        requestAnimationFrame(() => {
+                            if (app === 'water') waterRender();
+                            if (app === 'workout') renderLogPage();
+                        });
+                    }
                 });
             }
         });
@@ -3252,13 +3298,30 @@
             else if (name === 'presets') renderPresetsPage();
         };
 
+        // Inject skeleton ghost UI into the target list container
+        const skeletonTargetId = {
+            exercises: 'exList', history: 'historyList',
+            log: 'logExList', presets: 'presetChips'
+        }[name];
+        if (skeletonTargetId) {
+            const target = document.getElementById(skeletonTargetId);
+            if (target) {
+                const count = name === 'exercises' ? Math.min(exercises.length || 3, 6) : 3;
+                target.innerHTML = '<div class="skeleton-bar"></div>'.repeat(count);
+            }
+        }
+
         if (currentPage) {
             gsap.to(currentPage, { opacity: 0, x: -20, duration: 0.15, ease: 'power2.in', onComplete: () => {
-                currentPage.classList.remove('active'); currentPage.style.opacity = ''; currentPage.style.transform = '';
+                currentPage.classList.remove('active'); currentPage.style.cssText = '';
                 newPage.classList.add('active');
-                gsap.fromTo(newPage, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' });
-                // Render AFTER page slide-in begins — don't block the animation
-                requestAnimationFrame(renderFn);
+                gsap.fromTo(newPage, { opacity: 0, x: 20 }, {
+                    opacity: 1, x: 0, duration: 0.25, ease: 'power2.out',
+                    onComplete: () => {
+                        // Render AFTER slide-in is fully done — skeleton is visible during transition
+                        setTimeout(renderFn, 50);
+                    }
+                });
             }});
         } else {
             newPage.classList.add('active');
@@ -3380,7 +3443,7 @@
                 document.querySelectorAll('#workout-app .page').forEach(p => p.classList.remove('active'));
                 document.querySelectorAll('#workout-app .tab-btn').forEach(b => b.classList.remove('active'));
                 newPage.classList.add('active'); document.querySelector('#workout-app .tab-btn').classList.add('active');
-                currentPage.style.opacity = ''; currentPage.style.transform = '';
+                currentPage.style.cssText = '';
                 gsap.fromTo(newPage, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' });
             }});
         } else {
@@ -3398,11 +3461,14 @@
     function renderHistory(filter) {
         const el = document.getElementById('historyList');
         if (!sessions.length) { el.innerHTML = '<div class="empty"><div class="e-icon">📭</div><p>ยังไม่มี session</p></div>'; return; }
-        const prMap = {}; let html = '';
+        const prMap = {};
+        const frag = document.createDocumentFragment();
+        let hasCards = false;
         sessions.forEach(sess => {
             let entries = sess.entries;
             if (filter !== 'all') entries = entries.filter(e => { const ex = exercises.find(x => x.id === e.exId); return ex && ex.group === filter; });
             if (!entries.length) return;
+            hasCards = true;
             const totalSets = entries.reduce((s, e) => s + e.sets.length, 0);
             const dateStr = new Date(sess.date + 'T12:00:00').toLocaleDateString('th-TH', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
             const entriesHtml = entries.map(e => {
@@ -3410,9 +3476,17 @@
                 const pills = e.sets.map((s, si) => { const w = parseFloat(s.weight) || 0; const r = parseInt(s.reps) || 0; let isPR = false; if (w > 0 && (!prMap[e.exId] || w > prMap[e.exId])) { prMap[e.exId] = w; isPR = true; } return `<div class="set-pill ${isPR && si === e.sets.length - 1 ? 'pr' : ''}">${w > 0 ? w + 'kg' : '?'}×${r > 0 ? r : '?'}</div>`; }).join('');
                 return `<div class="session-ex-row"><div class="session-ex-name">${ex?.name || '?'} <span class="ex-group ${ex?.group || 'other'}" style="font-size:0.6rem">${ex?.group || ''}</span></div><div class="set-pills">${pills}</div></div>`;
             }).join('');
-            html += `<div class="session-card"><div class="session-header" onclick="toggleSession('${sess.id}')"><div><div class="session-date">${dateStr}</div><div class="session-summary">${entries.length} ท่า · ${totalSets} sets</div></div><div style="display:flex;align-items:center;gap:4px"><button class="del-sess-btn" onclick="event.stopPropagation();deleteSession('${sess.id}')">🗑</button><span class="session-arrow" id="arrow-${sess.id}">▼</span></div></div><div class="session-body" id="body-${sess.id}" style="max-height:0;opacity:0;overflow:hidden"><div class="session-body-inner">${entriesHtml}</div></div></div>`;
+            const card = document.createElement('div');
+            card.className = 'session-card';
+            card.innerHTML = `<div class="session-header" onclick="toggleSession('${sess.id}')"><div><div class="session-date">${dateStr}</div><div class="session-summary">${entries.length} ท่า · ${totalSets} sets</div></div><div style="display:flex;align-items:center;gap:4px"><button class="del-sess-btn" onclick="event.stopPropagation();deleteSession('${sess.id}')">🗑</button><span class="session-arrow" id="arrow-${sess.id}">▼</span></div></div><div class="session-body" id="body-${sess.id}" style="max-height:0;opacity:0;overflow:hidden"><div class="session-body-inner">${entriesHtml}</div></div>`;
+            frag.appendChild(card);
         });
-        el.innerHTML = html || '<div class="empty"><p>ไม่มี session ในหมวดนี้</p></div>';
+        el.innerHTML = '';
+        if (hasCards) {
+            el.appendChild(frag);
+        } else {
+            el.innerHTML = '<div class="empty"><p>ไม่มี session ในหมวดนี้</p></div>';
+        }
         gsap.fromTo('#workout-app .session-card', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, ease: 'power2.out' });
     }
     function toggleSession(id) {

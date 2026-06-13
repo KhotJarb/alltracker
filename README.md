@@ -5,7 +5,7 @@
 <h1 align="center">🔥 All Tracker</h1>
 
 <p align="center">
-  <strong>A premium, world-class tracking PWA that gamifies hydration &amp; fitness<br/>with buttery-smooth animations, Duolingo-style streaks, and smart push notifications.</strong>
+  <strong>A cool tracking webapp that gamifies hydration &amp; fitness<br/>with buttery-smooth animations, Streaks, and smart push notifications.</strong>
 </p>
 
 <p align="center">

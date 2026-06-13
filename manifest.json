@@ -1,0 +1,31 @@
+{
+    "name": "Water & Workout Tracker",
+    "short_name": "Tracker",
+    "description": "Premium water hydration & workout tracking app with streaks, notifications, and beautiful UI",
+    "start_url": "./tracker.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#0F172A",
+    "background_color": "#0F172A",
+    "categories": ["health", "fitness", "lifestyle"],
+    "icons": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230F172A'/%3E%3Ctext x='96' y='110' text-anchor='middle' font-size='100'%3E💧%3C/text%3E%3C/svg%3E",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230F172A'/%3E%3Ctext x='256' y='300' text-anchor='middle' font-size='280'%3E💧%3C/text%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230F172A'/%3E%3Ctext x='256' y='300' text-anchor='middle' font-size='280'%3E💧%3C/text%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "maskable"
+        }
+    ]
+}

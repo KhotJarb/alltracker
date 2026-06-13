@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางดื่มน้ำ</title>
+
+    <!-- Google Fonts: Prompt (Thai) + Inter (Latin/numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- GSAP for premium animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+        /* ══════════════════════════════════════
+           RESET & BASE
+           ══════════════════════════════════════ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0F172A;
+            --accent: #38bdf8;
+            --accent2: #0ea5e9;
+            --done: #22c55e;
+            --done-glow: rgba(34, 197, 94, 0.4);
+            --text: #f0f0ff;
+            --muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: rgba(56, 189, 248, 0.3);
+            color: #fff;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Prompt', 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            padding: 16px;
+            max-width: 420px;
+            margin: 0 auto;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ══════════════════════════════════════
+           ANIMATED MESH GRADIENT BACKGROUND
+           ══════════════════════════════════════ */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        .bg-mesh .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+        }
+
+        .bg-mesh .orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #1e3a5f 0%, transparent 70%);
+            top: -150px; left: -100px;
+            animation: drift1 20s ease-in-out infinite;
+        }
+
+        .bg-mesh .orb-2 {
+            width: 450px; height: 450px;
+            background: radial-gradient(circle, #2d1b69 0%, transparent 70%);
+            top: 50%; right: -150px;
+            animation: drift2 25s ease-in-out infinite;
+        }
+
+        .bg-mesh .orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #0c4a6e 0%, transparent 70%);
+            bottom: -100px; left: 30%;
+            animation: drift3 22s ease-in-out infinite;
+        }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(80px, 60px) scale(1.1); }
+            66% { transform: translate(-40px, 100px) scale(0.95); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-70px, -50px) scale(1.05); }
+            66% { transform: translate(50px, -80px) scale(0.9); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(60px, -40px) scale(1.08); }
+            66% { transform: translate(-80px, 30px) scale(0.92); }
+        }
+
+        /* ══════════════════════════════════════
+           GLASSMORPHISM MIXINS
+           ══════════════════════════════════════ */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 var(--glass-highlight);
+        }
+
+        /* ══════════════════════════════════════
+           HEADER
+           ══════════════════════════════════════ */
+        header {
+            text-align: center;
+            padding: 28px 0 20px;
+        }
+
+        /* Water drop SVG icon with float + glow */
+        .drop-icon {
+            display: inline-block;
+            margin-bottom: 12px;
+            animation: float 3s ease-in-out infinite, glow 2s ease-in-out infinite;
+        }
+
+        .drop-icon svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--accent);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.5));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4)); }
+            50% { filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.9)); }
+        }
+
+        header h1 {
+            font-family: 'Inter', 'Prompt', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        /* ══════════════════════════════════════
+           LIQUID WAVE PROGRESS CIRCLE
+           ══════════════════════════════════════ */
+        .progress-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 16px 0 24px;
+            gap: 10px;
+        }
+
+        .wave-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .wave-svg {
+            width: 180px;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        /* Outer glass ring */
+        .wave-ring {
+            fill: none;
+            stroke: var(--glass-border);
+            stroke-width: 3;
+        }
+
+        /* Liquid body */
+        .wave-liquid {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Animated waves */
+        .wave-path-1 {
+            fill: rgba(56, 189, 248, 0.35);
+            animation: waveMove1 3s linear infinite;
+        }
+
+        .wave-path-2 {
+            fill: rgba(14, 165, 233, 0.25);
+            animation: waveMove2 4s linear infinite;
+        }
+
+        @keyframes waveMove1 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-180px); }
+        }
+
+        @keyframes waveMove2 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-180px); }
+        }
+
+        .wave-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .wave-ml {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .wave-label {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .progress-info {
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .progress-info span {
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        /* ══════════════════════════════════════
+           RESET BUTTON
+           ══════════════════════════════════════ */
+        .reset-btn {
+            display: block;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            color: var(--muted);
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.82rem;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+            transform: scale(1.03);
+            box-shadow: 0 4px 24px rgba(56, 189, 248, 0.15);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* ══════════════════════════════════════
+           CHECKLIST
+           ══════════════════════════════════════ */
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 var(--glass-highlight);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 0 var(--glass-highlight);
+        }
+
+        .item:active {
+            transform: scale(0.98);
+        }
+
+        .item.done {
+            border-color: rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.06);
+        }
+
+        .item.done .item-time {
+            color: var(--done);
+        }
+
+        .item.done .item-name {
+            position: relative;
+        }
+
+        .item.done .item-name::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            height: 2px;
+            width: 100%;
+            background: var(--done);
+            opacity: 0.6;
+            animation: strikethrough 0.4s ease forwards;
+        }
+
+        @keyframes strikethrough {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .item.done .item-ml {
+            color: var(--done);
+        }
+
+        /* Checkbox */
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .checkbox svg {
+            width: 14px;
+            height: 14px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .checkbox .check-path {
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            transition: stroke-dashoffset 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .item.done .checkbox {
+            background: var(--done);
+            border-color: var(--done);
+            box-shadow: 0 0 12px var(--done-glow);
+            animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .item.done .checkbox .check-path {
+            stroke-dashoffset: 0;
+        }
+
+        @keyframes checkBounce {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .item-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-time {
+            font-size: 0.72rem;
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .item-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 1px;
+            transition: opacity 0.25s;
+            display: inline-block;
+            position: relative;
+        }
+
+        .item-note {
+            font-size: 0.76rem;
+            color: var(--muted);
+            margin-top: 2px;
+            font-weight: 300;
+        }
+
+        .item-ml {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+
+        /* GYM Tag */
+        .tag {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.05em;
+        }
+
+        /* ══════════════════════════════════════
+           CONFETTI PARTICLES
+           ══════════════════════════════════════ */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ══════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════ */
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.73rem;
+            margin-top: 28px;
+            padding-bottom: 24px;
+            letter-spacing: 0.01em;
+            font-weight: 300;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated mesh gradient background -->
+    <div class="bg-mesh">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <header>
+        <!-- Animated water drop SVG icon -->
+        <div class="drop-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor" stroke="none"/>
+            </svg>
+        </div>
+        <h1>ตารางดื่มน้ำ</h1>
+        <p>แตะเพื่อ tick ✓ เมื่อดื่มแล้ว</p>
+    </header>
+
+    <!-- Liquid Wave Progress Circle -->
+    <div class="progress-wrap">
+        <div class="wave-container">
+            <svg class="wave-svg" viewBox="0 0 180 180">
+                <defs>
+                    <clipPath id="circleClip">
+                        <circle cx="90" cy="90" r="80"/>
+                    </clipPath>
+                    <linearGradient id="liquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.7"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- Background circle -->
+                <circle cx="90" cy="90" r="82" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+
+                <!-- Clipped liquid area -->
+                <g clip-path="url(#circleClip)">
+                    <!-- Liquid fill rect — translated by JS -->
+                    <rect id="liquidFill" x="0" y="180" width="180" height="180" fill="url(#liquidGrad)"/>
+
+                    <!-- Wave paths (doubled width for seamless loop) -->
+                    <g id="waveGroup1" class="wave-path-1">
+                        <path d="M0,8 Q22.5,0 45,8 Q67.5,16 90,8 Q112.5,0 135,8 Q157.5,16 180,8 Q202.5,0 225,8 Q247.5,16 270,8 Q292.5,0 315,8 Q337.5,16 360,8 L360,40 L0,40 Z" id="wave1"/>
+                    </g>
+                    <g id="waveGroup2" class="wave-path-2">
+                        <path d="M0,10 Q22.5,18 45,10 Q67.5,2 90,10 Q112.5,18 135,10 Q157.5,2 180,10 Q202.5,18 225,10 Q247.5,2 270,10 Q292.5,18 315,10 Q337.5,2 360,10 L360,40 L0,40 Z" id="wave2"/>
+                    </g>
+                </g>
+
+                <!-- Glass ring overlay -->
+                <circle class="wave-ring" cx="90" cy="90" r="82"/>
+                <circle cx="90" cy="90" r="80" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="4"/>
+            </svg>
+
+            <div class="wave-text">
+                <div class="wave-ml" id="mlDone">0</div>
+                <div class="wave-label">ml วันนี้</div>
+            </div>
+        </div>
+        <div class="progress-info"><span id="countDone">0</span> / <span id="countTotal">10</span> รายการ · เป้า
+            <span>2,500 ml</span></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetAll()">🔄 รีเซ็ตสำหรับวันใหม่</button>
+
+    <div class="list" id="list"></div>
+
+    <footer>ไม่เกิน 200–250 ml ต่อชั่วโมง&nbsp;·&nbsp;ระหว่าง workout ได้ถึง 500 ml/ชม.</footer>
+
+    <script>
+        // ══════════════════════════════════════
+        // DATA — preserved exactly
+        // ══════════════════════════════════════
+        const items = [
+            { time: "ตื่นนอน", name: "ดื่มก่อนอาหารเช้า", ml: 300, note: "ร่างกายขาดน้ำหลังนอน 7–8 ชม." },
+            { time: "09:00", name: "จิบระหว่างเช้า", ml: 200, note: "ไม่เกิน 200 ml/ชม." },
+            { time: "11:00", name: "ก่อนมื้อเที่ยง", ml: 200, note: "ดื่มก่อนกินข้าว 1 ชม." },
+            { time: "12:00", name: "ระหว่างมื้อเที่ยง", ml: 200, note: "จิบช้าๆ ระหว่างกิน" },
+            { time: "14:00", name: "บ่าย — แทนกาแฟ", ml: 200, note: "ช่วงง่วงบ่ายจิบน้ำแทน" },
+            { time: "16:00", name: "ก่อน workout", ml: 200, note: "เตรียมร่างกายก่อนออกกำลัง", tag: "GYM" },
+            { time: "Workout", name: "ระหว่างออกกำลังกาย", ml: 400, note: "จิบทีละน้อยตลอด session", tag: "GYM" },
+            { time: "หลัง gym", name: "หลังออกกำลังกาย", ml: 300, note: "ภายใน 30 นาที", tag: "GYM" },
+            { time: "มื้อเย็น", name: "ระหว่างมื้อเย็น", ml: 200, note: "จิบช้าๆ ระหว่างกิน" },
+            { time: "20:00", name: "ก่อนนอน", ml: 100, note: "ไม่เกินนี้ — ป้องกันตื่นกลางดึก" },
+        ];
+
+        const TOTAL_GOAL = items.reduce((s, i) => s + i.ml, 0);
+        const PARTICLE_COLORS = ['#38bdf8', '#22c55e', '#a855f7', '#f59e0b', '#06b6d4', '#ec4899'];
+
+        let checked = JSON.parse(localStorage.getItem('wc_checked') || '[]');
+
+        function save() {
+            localStorage.setItem('wc_checked', JSON.stringify(checked));
+        }
+
+        function toggle(idx) {
+            const pos = checked.indexOf(idx);
+            const wasChecked = pos !== -1;
+            if (wasChecked) {
+                checked.splice(pos, 1);
+            } else {
+                checked.push(idx);
+            }
+            save();
+            render();
+
+            // Fire confetti particles when checking (not unchecking)
+            if (!wasChecked) {
+                const itemEl = document.querySelectorAll('.item')[idx];
+                if (itemEl) spawnParticles(itemEl);
+            }
+        }
+
+        function resetAll() {
+            checked = [];
+            save();
+            render();
+        }
+
+        // ══════════════════════════════════════
+        // CONFETTI PARTICLE BURST
+        // ══════════════════════════════════════
+        function spawnParticles(parentEl) {
+            const checkbox = parentEl.querySelector('.checkbox');
+            const rect = checkbox.getBoundingClientRect();
+            const parentRect = parentEl.getBoundingClientRect();
+            const cx = rect.left - parentRect.left + rect.width / 2;
+            const cy = rect.top - parentRect.top + rect.height / 2;
+
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = cx + 'px';
+                p.style.top = cy + 'px';
+                p.style.backgroundColor = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+                parentEl.appendChild(p);
+
+                const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.5;
+                const dist = 25 + Math.random() * 20;
+
+                gsap.to(p, {
+                    x: Math.cos(angle) * dist,
+                    y: Math.sin(angle) * dist,
+                    opacity: 0,
+                    scale: 0,
+                    duration: 0.6,
+                    ease: 'power2.out',
+                    onComplete: () => p.remove()
+                });
+            }
+        }
+
+        // ══════════════════════════════════════
+        // LIQUID WAVE POSITIONING
+        // ══════════════════════════════════════
+        function updateWave(pct) {
+            const fillEl = document.getElementById('liquidFill');
+            const wave1 = document.getElementById('waveGroup1');
+            const wave2 = document.getElementById('waveGroup2');
+
+            // The fill rect starts at y=180 (hidden below) and we move it up
+            // At 0% -> y=180 (no liquid), at 100% -> y=10 (full)
+            const fillY = 180 - (pct * 170);
+
+            gsap.to(fillEl, {
+                attr: { y: fillY },
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+
+            // Position wave paths at the liquid surface level
+            gsap.to(wave1, {
+                attr: { transform: `translate(0, ${fillY - 8})` },
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+
+            gsap.to(wave2, {
+                attr: { transform: `translate(0, ${fillY - 6})` },
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        }
+
+        // ══════════════════════════════════════
+        // RENDER
+        // ══════════════════════════════════════
+        function render() {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+
+            let mlDone = 0;
+            checked.forEach(i => { if (items[i]) mlDone += items[i].ml; });
+
+            items.forEach((item, idx) => {
+                const done = checked.includes(idx);
+                const div = document.createElement('div');
+                div.className = 'item' + (done ? ' done' : '');
+                div.onclick = () => toggle(idx);
+
+                const tagHtml = item.tag ? `<span class="tag">${item.tag}</span>` : '';
+
+                div.innerHTML = `
+<div class="checkbox">
+    <svg viewBox="0 0 14 14"><path class="check-path" d="M2 7l3.5 3.5L12 4"/></svg>
+</div>
+<div class="item-body">
+    <div class="item-time">${item.time}</div>
+    <div class="item-name">${item.name}${tagHtml}</div>
+    <div class="item-note">${item.note}</div>
+</div>
+<div class="item-ml">${item.ml} ml</div>
+`;
+                list.appendChild(div);
+            });
+
+            // Update wave progress
+            const pct = Math.min(mlDone / TOTAL_GOAL, 1);
+            updateWave(pct);
+
+            document.getElementById('mlDone').textContent = mlDone.toLocaleString();
+            document.getElementById('countDone').textContent = checked.length;
+            document.getElementById('countTotal').textContent = items.length;
+
+            // Staggered entrance animation for items
+            gsap.fromTo('.item', {
+                opacity: 0,
+                y: 20,
+                scale: 0.96
+            }, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.05,
+                ease: 'power2.out',
+                clearProps: 'transform'
+            });
+        }
+
+        // ══════════════════════════════════════
+        // INIT
+        // ══════════════════════════════════════
+        render();
+    </script>
+</body>
+
+</html>

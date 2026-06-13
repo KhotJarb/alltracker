@@ -22,20 +22,16 @@
 
 ---
 
-## 🎬 App Preview
-
-<!-- Replace these placeholders with actual GIF recordings of your app -->
+## 🎬 Live Demo
 
 <p align="center">
-  <img src=".github/assets/water-demo.gif" alt="Water Tracker Demo" width="280"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src=".github/assets/workout-demo.gif" alt="Workout Tracker Demo" width="280"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src=".github/assets/streak-demo.gif" alt="Streak Celebration Demo" width="280"/>
+  <a href="https://khotjarb.github.io/alltracker/">
+    <img src="https://img.shields.io/badge/🚀_Try_It_Live-khotjarb.github.io/alltracker-38bdf8?style=for-the-badge&labelColor=0F172A" alt="Live Demo"/>
+  </a>
 </p>
 
 <p align="center">
-  <sub>Water Tracker · Workout Logger · Streak Celebration</sub>
+  <sub>👆 Click the badge above to launch the app in your browser — no install required</sub>
 </p>
 
 ---

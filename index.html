@@ -9,7 +9,7 @@
     <!-- Google Fonts: Prompt (Thai) + Inter (Latin/numbers) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@700;800;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- GSAP for premium animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -20,7 +20,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tracker">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230F172A'/%3E%3Ctext x='90' y='105' text-anchor='middle' font-size='90'%3E💧%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
     <meta name="description" content="Premium water hydration & workout tracker with streaks and smart notifications">
 
     <style>
@@ -2100,10 +2100,93 @@
         }
         .notif-perm-skip:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.15); }
 
+        /* ══════════════════════════════════════════════════════════════
+           SPLASH SCREEN
+           ══════════════════════════════════════════════════════════════ */
+        .splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0F172A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
+        }
+
+        .splash.fade-out {
+            opacity: 0;
+            transform: scale(1.08);
+            pointer-events: none;
+        }
+
+
+        .splash-title {
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 40%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.25));
+            opacity: 0;
+            transform: scale(0.88) translateY(8px);
+            animation: splashTextIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+        }
+
+        .splash-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(148, 163, 184, 0.6);
+            opacity: 0;
+            transform: translateY(6px);
+            animation: splashSubIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.45s forwards;
+        }
+
+        .splash-bar {
+            width: 48px;
+            height: 3px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa);
+            opacity: 0;
+            transform: scaleX(0);
+            animation: splashBarIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.55s forwards;
+        }
+
+
+        @keyframes splashTextIn {
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes splashSubIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes splashBarIn {
+            to { opacity: 0.7; transform: scaleX(1); }
+        }
+
     </style>
 </head>
 
 <body>
+
+    <!-- Splash Screen -->
+    <div class="splash" id="splashScreen">
+
+        <div class="splash-title">All Tracker</div>
+        <div class="splash-bar"></div>
+        <div class="splash-sub">Hydration · Fitness · Streaks</div>
+    </div>
 
     <!-- Shared SVG gradients for fire icon -->
     <svg width="0" height="0" style="position:absolute">
@@ -3953,6 +4036,15 @@
 
         // Record initial water activity if any water was already checked
         if (waterChecked.length > 0) recordWaterActivity();
+
+        // Splash screen dismiss
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+            setTimeout(() => {
+                splash.classList.add('fade-out');
+                setTimeout(() => splash.remove(), 500);
+            }, 1800);
+        }
     })();
     </script>
 </body>

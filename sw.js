@@ -6,7 +6,7 @@
 const CACHE_NAME = 'tracker-v1';
 const APP_SHELL = [
     './',
-    './tracker.html',
+    './index.html',
     './manifest.json'
 ];
 
@@ -90,7 +90,7 @@ self.addEventListener('fetch', (event) => {
                         // Both cache and network failed
                         // For navigation requests, return cached index
                         if (event.request.mode === 'navigate') {
-                            return caches.match('./tracker.html');
+                            return caches.match('./index.html');
                         }
                     });
             })
@@ -131,7 +131,7 @@ self.addEventListener('push', (event) => {
         requireInteraction: false,
         vibrate: [100, 50, 100, 50, 200],
         data: {
-            url: data.url || './tracker.html',
+            url: data.url || './index.html',
             action: data.action || 'open'
         },
         actions: data.actions || []
@@ -147,14 +147,14 @@ self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
     const action = event.action;
-    const url = event.notification.data?.url || './tracker.html';
+    const url = event.notification.data?.url || './index.html';
 
     // Determine what to do based on action button clicked
     let targetUrl = url;
     if (action === 'log-water') {
-        targetUrl = './tracker.html#water';
+        targetUrl = './index.html#water';
     } else if (action === 'open-app') {
-        targetUrl = './tracker.html';
+        targetUrl = './index.html';
     }
 
     event.waitUntil(
@@ -162,7 +162,7 @@ self.addEventListener('notificationclick', (event) => {
             .then((clientList) => {
                 // If app is already open, focus it
                 for (const client of clientList) {
-                    if (client.url.includes('tracker.html') && 'focus' in client) {
+                    if (client.url.includes('index.html') && 'focus' in client) {
                         return client.focus();
                     }
                 }
@@ -186,7 +186,7 @@ self.addEventListener('message', (event) => {
             tag: 'tracker-mock',
             renotify: true,
             vibrate: [100, 50, 100, 50, 200],
-            data: { url: './tracker.html' },
+            data: { url: './index.html' },
             actions: [
                 { action: 'log-water', title: '💧 Log Water' },
                 { action: 'open-app', title: '📱 Open App' }

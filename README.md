@@ -110,7 +110,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                   tracker.html                   │
+│                   index.html                   │
 │  ┌───────────┐  ┌────────────┐  ┌────────────┐  │
 │  │  Water     │  │  Workout   │  │  Settings  │  │
 │  │  Tracker   │  │  Tracker   │  │  Modal     │  │
@@ -138,11 +138,11 @@
 ```
 All Tracker/
 ├── Tracker-Folder/
-│   ├── tracker.html          # Main SPA — all UI, styles, and logic
+│   ├── index.html          # Main SPA — all UI, styles, and logic
 │   ├── manifest.json         # PWA manifest (standalone, icons, theme)
 │   ├── sw.js                 # Service Worker (caching, push, offline)
-│   ├── hydrationtracker.html # Legacy standalone water tracker
-│   └── workouttracker.html   # Legacy standalone workout tracker
+│   ├── hydrationindex.html # Legacy standalone water tracker
+│   └── workoutindex.html   # Legacy standalone workout tracker
 └── README.md                 # You are here
 ```
 

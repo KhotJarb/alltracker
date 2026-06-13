@@ -2,7 +2,7 @@
     "name": "Water & Workout Tracker",
     "short_name": "Tracker",
     "description": "Premium water hydration & workout tracking app with streaks, notifications, and beautiful UI",
-    "start_url": "./tracker.html",
+    "start_url": "./index.html",
     "display": "standalone",
     "orientation": "portrait",
     "theme_color": "#0F172A",

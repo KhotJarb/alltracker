@@ -2101,6 +2101,175 @@
         .notif-perm-skip:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.15); }
 
         /* ══════════════════════════════════════════════════════════════
+           GPU ACCELERATION HINTS (all viewports)
+           Force compositing layers for heavily animated elements
+           ══════════════════════════════════════════════════════════════ */
+        .bg-mesh .orb,
+        .splash,
+        .splash-title,
+        .streak-fire svg,
+        .celeb-fire svg,
+        .smart-toast {
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* These use transform for positioning — only hint, don't override */
+        #water-app .wave-path-1,
+        #water-app .wave-path-2,
+        #waveGroup1,
+        #waveGroup2,
+        #liquidFill,
+        .settings-sheet,
+        .edit-task-sheet,
+        .confirm-modal,
+        .notif-perm-modal {
+            will-change: transform, opacity;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           MOBILE PERFORMANCE — 60fps ANTI-LAG
+           Graceful degradation: keep premium feel, kill GPU-heavy effects
+           ══════════════════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+
+            /* --- BACKGROUND: Freeze animated orbs → static ambient glow --- */
+            .bg-mesh .orb {
+                animation: none !important;
+                opacity: 0.2;
+                filter: blur(80px);
+            }
+            .bg-mesh .orb-1 { transform: translate(0, 0) scale(1); }
+            .bg-mesh .orb-2 { transform: translate(0, 0) scale(1); }
+            .bg-mesh .orb-3 { transform: translate(0, 0) scale(1); }
+
+            /* --- GLASSMORPHISM: Kill backdrop-filter, use opaque fallback --- */
+            .seg-control,
+            .settings-sheet,
+            .edit-task-sheet,
+            .confirm-modal,
+            .notif-perm-modal,
+            .smart-toast,
+            #workout-app .ex-selector,
+            #workout-app .session-card {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: rgba(15, 23, 42, 0.97) !important;
+            }
+
+            .notif-perm-overlay,
+            .edit-task-overlay,
+            .confirm-overlay,
+            .settings-overlay {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: rgba(0, 0, 0, 0.7) !important;
+            }
+
+            /* App cards — remove blur, use solid bg */
+            #water-app .item,
+            #workout-app .session-card,
+            .stg-card {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+
+            /* --- FIRE FLICKER: Simplify to transform-only --- */
+            .streak-fire.active svg {
+                animation: fireFlickerMobile 1.5s ease-in-out infinite;
+                filter: drop-shadow(0 0 6px var(--fire-glow1));
+            }
+
+            @keyframes fireFlickerMobile {
+                0%, 100% { transform: scale(1) rotate(0deg); }
+                25% { transform: scale(1.06) rotate(-1.5deg); }
+                50% { transform: scale(1.03) rotate(1deg); }
+                75% { transform: scale(1.08) rotate(-0.5deg); }
+            }
+
+            /* --- EMBERS: Kill particle pseudo-elements --- */
+            .streak-fire.active::before,
+            .streak-fire.active::after {
+                display: none !important;
+            }
+
+            /* --- WATER DROP GLOW: Static filter only --- */
+            #water-app .drop-icon svg {
+                animation: none !important;
+                filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+            }
+
+            /* --- CELEBRATION FIRE: Transform-only pulse --- */
+            .celeb-fire svg {
+                animation: celebFirePulseMobile 1s ease-in-out infinite;
+                filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.6));
+            }
+
+            @keyframes celebFirePulseMobile {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+
+            /* --- BOX-SHADOW PULSES: Disable all animated shadows --- */
+            .set-pill.pr {
+                animation: none !important;
+                box-shadow: 0 0 6px rgba(168, 85, 247, 0.25);
+            }
+
+            .celeb-badge {
+                animation: none !important;
+                box-shadow: 0 0 10px rgba(251, 146, 60, 0.3);
+            }
+
+            .smart-toast.urgent {
+                animation: none !important;
+                border-color: rgba(249, 115, 22, 0.4);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 10px rgba(249, 115, 22, 0.15);
+            }
+
+            /* --- DONE CHECKBOX: Remove animated box-shadow --- */
+            #water-app .item.done .checkbox {
+                box-shadow: none;
+            }
+
+            /* --- WAVE ANIMATION: Slow down for perf --- */
+            #water-app .wave-path-1 {
+                animation-duration: 5s;
+            }
+            #water-app .wave-path-2 {
+                animation-duration: 7s;
+            }
+
+            /* --- CELEBRATION GLOW RING: Static on mobile --- */
+            .celeb-fire::before {
+                animation: none !important;
+                opacity: 0.15;
+            }
+
+            /* --- REDUCE TRANSITION DURATIONS --- */
+            .settings-sheet,
+            .edit-task-sheet {
+                transition-duration: 0.3s !important;
+            }
+
+            .confirm-modal {
+                transition-duration: 0.25s !important;
+            }
+        }
+
+        /* Ultra-low-end devices: prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .bg-mesh .orb { display: none; }
+            .splash { display: none; }
+        }
+
+        /* ══════════════════════════════════════════════════════════════
            SPLASH SCREEN
            ══════════════════════════════════════════════════════════════ */
         .splash {
@@ -2802,7 +2971,9 @@
         const parentRect = parentEl.getBoundingClientRect();
         const cx = rect.left - parentRect.left + rect.width / 2;
         const cy = rect.top - parentRect.top + rect.height / 2;
-        for (let i = 0; i < 8; i++) {
+        const isMobile = window.innerWidth <= 768;
+        const count = isMobile ? 4 : 8;
+        for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             p.style.left = cx + 'px';
@@ -3413,7 +3584,8 @@
         const colors = ['#fb923c', '#f59e0b', '#fbbf24', '#ef4444', '#a855f7', '#22c55e', '#38bdf8', '#ec4899'];
         const particles = [];
 
-        for (let i = 0; i < 120; i++) {
+        const confettiCount = window.innerWidth <= 768 ? 50 : 120;
+        for (let i = 0; i < confettiCount; i++) {
             particles.push({
                 x: W / 2 + (Math.random() - 0.5) * 100,
                 y: H / 2 - 50,

@@ -58,7 +58,7 @@
 - **Modern dropdown forms** — sleek, animated exercise selection UI
 - **Persistent logs** — review past workout sessions, all stored locally
 
-### 🔥 Unified Duolingo-Style Streak
+### 🔥 Unified Cool Style Streak
 - **Global streak counter** — advances +1/day when you complete *either* water or workout goals
 - **Daily cooldown** — can only increment once per calendar day; resets at midnight if missed
 - **Custom fire animations** — flickering SVG flame icon with gradient glow and floating ember particles
@@ -76,7 +76,7 @@
 - **Standalone mode** — no browser chrome, themed status bar matching the dark UI
 
 ### 🎨 Personalization (Settings)
-- **Theme system** — choose streak flame colors: Blaze Orange, Neon Blue, Cyber Green, Royal Purple, Sakura Pink
+- **Streak theme system** — choose streak flame colors: Blaze Orange, Neon Blue, Cyber Green, Royal Purple, Sakura Pink
 - **Hydration goal slider** — 1,500ml – 4,000ml with real-time UI updates
 - **Quiet hours** — configure wake/sleep times for notification scheduling
 - **Toggle controls** — enable/disable hydration reminders and streak warnings independently
@@ -247,7 +247,7 @@ SOFTWARE.
 ---
 
 <p align="center">
-  <strong>Built with ❤️ and way too much ☕</strong>
+  <strong>Built with <a href="https://github.com/KhotJarb">KhotJarb</a> ❤️ and way too much ☕</strong>
   <br/>
   <sub>If you found this useful, consider giving it a ⭐</sub>
 </p>

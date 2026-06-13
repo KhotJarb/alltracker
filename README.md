@@ -5,7 +5,7 @@
 <h1 align="center">🔥 All Tracker</h1>
 
 <p align="center">
-  <strong>A premium, world-class tracking PWA that gamifies hydration &amp; fitness<br/>with buttery-smooth animations, Duolingo-style streaks, and smart push notifications.</strong>
+  <strong>A cool tracking webapp that gamifies hydration &amp; fitness<br/>with buttery-smooth animations, Streaks, and smart push notifications.</strong>
 </p>
 
 <p align="center">
@@ -19,15 +19,6 @@
 </p>
 
 <br/>
-
-<p align="center">
-  <!-- Replace with your actual banner screenshot -->
-  <img src=".github/assets/banner.png" alt="All Tracker Banner" width="800"/>
-</p>
-
-<p align="center">
-  <em>↑ Replace with an actual screenshot or banner of your app</em>
-</p>
 
 ---
 

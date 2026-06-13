@@ -20,15 +20,6 @@
 
 <br/>
 
-<p align="center">
-  <!-- Replace with your actual banner screenshot -->
-  <img src=".github/assets/banner.png" alt="All Tracker Banner" width="800"/>
-</p>
-
-<p align="center">
-  <em>↑ Replace with an actual screenshot or banner of your app</em>
-</p>
-
 ---
 
 ## 🎬 App Preview

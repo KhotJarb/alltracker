@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/🔥_All_Tracker-v0.1.1-38bdf8?style=for-the-badge&labelColor=0F172A" alt="All Tracker v0.1.0"/>
+  <img src="https://img.shields.io/badge/🔥_All_Tracker-v0.1.1-38bdf8?style=for-the-badge&labelColor=0F172A" alt="All Tracker v0.1.1"/>
 </p>
 
 <h1 align="center">🔥 All Tracker</h1>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/🔥_All_Tracker-v0.1.0-38bdf8?style=for-the-badge&labelColor=0F172A" alt="All Tracker v0.1.0"/>
+  <img src="https://img.shields.io/badge/🔥_All_Tracker-v0.1.1-38bdf8?style=for-the-badge&labelColor=0F172A" alt="All Tracker v0.1.0"/>
 </p>
 
 <h1 align="center">🔥 All Tracker</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-0.1.0-38bdf8?style=flat-square&labelColor=0F172A" alt="Version"/>
+  <img src="https://img.shields.io/badge/Version-0.1.1-38bdf8?style=flat-square&labelColor=0F172A" alt="Version"/>
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" alt="HTML5"/>
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" alt="CSS3"/>
   <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=000" alt="JavaScript"/>

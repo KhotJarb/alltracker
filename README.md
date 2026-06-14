@@ -148,10 +148,10 @@ All Tracker/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/all-tracker.git
+git clone https://github.com/your-username/alltracker.git
 
 # Navigate to the project
-cd all-tracker/Tracker-Folder
+cd alltracker/Tracker-Folder
 
 # Serve locally (pick one)
 npx serve .                    # Option 1: npx serve
@@ -242,7 +242,6 @@ SOFTWARE.
 - [GSAP](https://greensock.com/) — Professional-grade animation engine
 - [Google Fonts](https://fonts.google.com/) — Inter & Prompt typefaces
 - [Shields.io](https://shields.io/) — Beautiful README badges
-- [Duolingo](https://www.duolingo.com/) — Inspiration for the streak system
 
 ---
 

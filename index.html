@@ -272,6 +272,9 @@
             visibility: visible;
             opacity: 1;
             pointer-events: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
         }
 
         /* --- Skeleton Loader (ghost UI during transitions) --- */
@@ -465,7 +468,9 @@
             transform: translateY(20px);
         }
 
-        #water-app .item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 var(--glass-highlight); }
+        @media (hover: hover) {
+            #water-app .item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 var(--glass-highlight); }
+        }
         #water-app .item:active { transform: scale(0.98); }
         #water-app .item.done { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.06); }
         #water-app .item.done .item-time { color: var(--w-done); }
@@ -3600,7 +3605,21 @@
         const wasChecked = pos !== -1;
         if (wasChecked) waterChecked.splice(pos, 1);
         else waterChecked.push(id);
-        waterRender();
+
+        // --- Targeted DOM Micro-Update (NO full re-render) ---
+        const itemEl = document.querySelector(`#water-app .item[data-id="${id}"]`);
+        if (itemEl) {
+            itemEl.classList.toggle('done', !wasChecked);
+        }
+
+        // Update progress counters directly
+        const currentGoal = getWaterGoal();
+        const mlDone = getWaterMlDone();
+        const pct = Math.min(mlDone / currentGoal, 1);
+        waterUpdateWave(pct);
+        document.getElementById('mlDone').textContent = mlDone.toLocaleString();
+        document.getElementById('countDone').textContent = waterChecked.length;
+
         // Defer storage + heavy checks until after animation frame
         deferStorage(() => {
             waterSave();
@@ -3608,8 +3627,6 @@
             if (!wasChecked) incrementBadgeStat('totalWaterLogs', 1);
         });
         if (!wasChecked) {
-            const itemIdx = waterItems.findIndex(i => i.id === id);
-            const itemEl = document.querySelectorAll('#water-app .item')[itemIdx];
             if (itemEl) waterSpawnParticles(itemEl);
             // Check if water goal is now met
             if (getWaterMlDone() >= getWaterGoal()) {
@@ -3671,6 +3688,7 @@
             const done = waterChecked.includes(item.id);
             const div = document.createElement('div');
             div.className = 'item' + (done ? ' done' : '');
+            div.setAttribute('data-id', item.id);
             if (waterEditMode) {
                 div.onclick = () => openEditTask(idx);
             } else {

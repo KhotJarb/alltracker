@@ -504,9 +504,132 @@
 
         #water-app .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 10; }
 
+        /* Water Preset System */
+        .water-preset-btn {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--w-accent); font-size: 0.72rem; font-weight: 600;
+            font-family: 'Inter', sans-serif; padding: 5px 12px;
+            border-radius: 20px; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 5px; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .water-preset-btn:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(56,189,248,0.2); }
+        .water-preset-btn:active { transform: scale(0.95); }
+        .water-preset-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .active-preset-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+            color: var(--w-accent); font-size: 0.62rem; font-weight: 600;
+            font-family: 'Inter', sans-serif; padding: 2px 10px;
+            border-radius: 12px; margin-top: 6px; margin-left: 8px;
+        }
+        .active-preset-pill::before { content: '✦'; font-size: 0.55rem; }
+
+        .preset-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); z-index: 8000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .preset-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .preset-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            max-width: 440px; margin: 0 auto;
+            background: rgba(15, 23, 42, 0.97);
+            border-radius: 24px 24px 0 0;
+            z-index: 8001; max-height: 85vh; overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .preset-sheet.open { transform: translateY(0); }
+
+        .preset-list { padding: 0 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+        .preset-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 14px 16px; position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .preset-card:active { transform: scale(0.98); }
+        .preset-card.active-preset { border-color: rgba(56,189,248,0.4); box-shadow: 0 0 20px rgba(56,189,248,0.1); }
+        .preset-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .preset-card-name { font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 700; color: #fff; }
+        .preset-card-goal { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--w-accent); }
+        .preset-card-meta { font-size: 0.66rem; color: var(--muted); margin-bottom: 10px; }
+        .preset-card-actions { display: flex; gap: 8px; }
+        .preset-card-actions button {
+            flex: 1; padding: 7px 0; border-radius: 10px; font-size: 0.72rem;
+            font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
+            border: 1px solid var(--glass-border); background: var(--glass-bg);
+            color: var(--text); transition: transform 0.2s, background 0.2s;
+        }
+        .preset-card-actions button:active { transform: scale(0.95); }
+        .preset-card-actions .preset-apply-btn { background: rgba(56,189,248,0.15); color: var(--w-accent); border-color: rgba(56,189,248,0.3); }
+        .preset-card-actions .preset-delete-btn { color: #f87171; border-color: rgba(248,113,113,0.2); }
+
+        .preset-create-btn {
+            width: 100%; padding: 12px; border-radius: 14px;
+            border: 2px dashed var(--glass-border); background: transparent;
+            color: var(--w-accent); font-family: 'Inter', sans-serif;
+            font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .preset-create-btn:hover { border-color: var(--w-accent); }
+        .preset-create-btn:active { transform: scale(0.97); }
+
+        /* Preset Editor Form */
+        .preset-editor { padding: 0 16px 20px; }
+
+        .preset-field { margin-bottom: 12px; }
+        .preset-field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; font-family: 'Inter', sans-serif; }
+        .preset-field input {
+            width: 100%; padding: 10px 14px; border-radius: 12px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: #fff; font-family: 'Inter', sans-serif; font-size: 0.88rem;
+            outline: none; transition: border-color 0.2s;
+        }
+        .preset-field input:focus { border-color: var(--w-accent); }
+        .preset-editor-actions { display: flex; gap: 10px; margin-top: 16px; }
+        .preset-editor-actions button {
+            flex: 1; padding: 11px; border-radius: 12px; font-weight: 700;
+            font-family: 'Inter', sans-serif; font-size: 0.82rem; cursor: pointer;
+            border: none; transition: transform 0.2s;
+        }
+        .preset-editor-actions button:active { transform: scale(0.95); }
+        .preset-save-btn { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #fff; }
+        .preset-cancel-btn { background: var(--glass-bg); border: 1px solid var(--glass-border) !important; color: var(--text); }
+
+        /* Confirm dialog */
+        .preset-confirm-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); z-index: 9000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .preset-confirm-overlay.open { opacity: 1; pointer-events: auto; }
+        .preset-confirm-card {
+            background: rgba(15, 23, 42, 0.97); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 24px; max-width: 320px; width: 90%;
+            text-align: center;
+        }
+        .preset-confirm-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .preset-confirm-title { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .preset-confirm-msg { font-size: 0.78rem; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+        .preset-confirm-actions { display: flex; gap: 10px; }
+        .preset-confirm-actions button {
+            flex: 1; padding: 11px; border-radius: 12px; font-weight: 700;
+            font-family: 'Inter', sans-serif; font-size: 0.82rem; cursor: pointer;
+            border: none; transition: transform 0.2s;
+        }
+        .preset-confirm-actions button:active { transform: scale(0.95); }
+        .preset-confirm-yes { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
+        .preset-confirm-no { background: var(--glass-bg); border: 1px solid var(--glass-border) !important; color: var(--text); }
+
         #water-app footer {
             text-align: center; color: var(--muted); font-size: 0.73rem;
-            margin-top: 28px; padding-bottom: 24px; letter-spacing: 0.01em; font-weight: 300;
+            margin-top: 28px; padding-bottom: 80px; letter-spacing: 0.01em; font-weight: 300;
         }
 
 
@@ -727,11 +850,11 @@
         #workout-app .empty p { font-size: 0.88rem; }
 
         /* --- Toast --- */
-        #workout-app .toast {
+        #globalToast {
             position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
             background: rgba(34, 197, 94, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             color: white; font-size: 0.85rem; font-weight: 600; padding: 10px 22px; border-radius: 30px;
-            opacity: 0; z-index: 200; white-space: nowrap; font-family: 'Prompt', sans-serif;
+            opacity: 0; z-index: 9999; white-space: nowrap; font-family: 'Prompt', sans-serif;
             pointer-events: none; box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; gap: 6px;
         }
@@ -1083,6 +1206,144 @@
 
         .celeb-close-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(249, 115, 22, 0.5); }
         .celeb-close-btn:active { transform: scale(0.96); }
+
+        /* --- Milestone Tier Overrides (celebration modal) --- */
+        .celeb-fire.tier-starter svg { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.7)) drop-shadow(0 0 40px rgba(59, 130, 246, 0.5)); }
+        .celeb-fire.tier-bronze svg { filter: drop-shadow(0 0 25px rgba(217, 119, 6, 0.8)) drop-shadow(0 0 50px rgba(217, 119, 6, 0.5)); }
+        .celeb-fire.tier-silver svg { filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 50px rgba(168, 85, 247, 0.5)); }
+        .celeb-fire.tier-gold svg { filter: drop-shadow(0 0 30px rgba(245, 158, 11, 0.9)) drop-shadow(0 0 60px rgba(245, 158, 11, 0.6)); }
+        .celeb-fire.tier-diamond svg { filter: drop-shadow(0 0 35px rgba(56, 189, 248, 0.9)) drop-shadow(0 0 70px rgba(56, 189, 248, 0.7)); }
+        .celeb-fire.tier-diamond { width: 100px; height: 100px; }
+        .celeb-fire.tier-diamond svg { width: 100px; height: 100px; }
+        .celeb-fire.tier-gold, .celeb-fire.tier-silver { width: 90px; height: 90px; }
+        .celeb-fire.tier-gold svg, .celeb-fire.tier-silver svg { width: 90px; height: 90px; }
+
+        .celeb-milestone-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+        .celeb-milestone-text.tier-starter { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .celeb-milestone-text.tier-bronze { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.3); }
+        .celeb-milestone-text.tier-silver { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+        .celeb-milestone-text.tier-gold { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+        .celeb-milestone-text.tier-diamond { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+
+        /* --- Achievement Badge System --- */
+        .achievements-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); z-index: 8000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .achievements-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .achievements-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            max-width: 440px; margin: 0 auto;
+            background: rgba(15, 23, 42, 0.97);
+            border-radius: 24px 24px 0 0;
+            z-index: 8001; max-height: 80vh; overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+        }
+        .achievements-sheet.open { transform: translateY(0); }
+
+        .achievements-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 20px 12px; position: sticky; top: 0;
+            background: rgba(15, 23, 42, 0.97); z-index: 1;
+        }
+        .achievements-title {
+            font-family: 'Inter', sans-serif; font-size: 1.05rem;
+            font-weight: 800; color: #fff;
+        }
+        .achievements-count {
+            font-size: 0.75rem; color: var(--muted); font-weight: 500;
+        }
+
+        .badge-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; padding: 0 16px 24px;
+        }
+
+        .badge-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 16px 8px; text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .badge-card.unlocked {
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+        }
+        .badge-card.unlocked:active { transform: scale(0.96); }
+        .badge-card.locked {
+            filter: grayscale(1); opacity: 0.4;
+        }
+
+        .badge-icon {
+            font-size: 2rem; margin-bottom: 6px; display: block;
+            line-height: 1;
+        }
+        .badge-card.locked .badge-icon::after {
+            content: '🔒'; font-size: 0.7rem;
+            position: absolute; top: 8px; right: 8px;
+        }
+        .badge-name {
+            font-family: 'Inter', sans-serif; font-size: 0.72rem;
+            font-weight: 700; color: #fff; margin-bottom: 2px;
+        }
+        .badge-desc {
+            font-size: 0.62rem; color: var(--muted); line-height: 1.3;
+        }
+
+        .badge-card.unlocked .badge-name {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Achievement button in top bar */
+        .achievements-btn {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text); font-size: 1.1rem; width: 36px; height: 36px;
+            border-radius: 50%; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .achievements-btn:hover { transform: scale(1.1); box-shadow: 0 0 12px rgba(168,85,247,0.3); }
+        .achievements-btn:active { transform: scale(0.95); }
+        .achievements-btn .notif-dot {
+            position: absolute; top: -2px; right: -2px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ef4444; display: none;
+            animation: notifDotPulse 1.5s ease-in-out infinite;
+        }
+        .achievements-btn .notif-dot.show { display: block; }
+        @keyframes notifDotPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(239,68,68,0.5); }
+            50% { transform: scale(1.3); box-shadow: 0 0 8px rgba(239,68,68,0.8); }
+        }
+
+        /* --- Escalating Notification: Critical tier --- */
+        .smart-toast.urgent-critical {
+            border-color: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: urgentCriticalPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes urgentCriticalPulse {
+            0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 35px rgba(239, 68, 68, 0.6); }
+        }
 
         /* Confetti canvas */
         #confettiCanvas {
@@ -1796,7 +2057,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.25s;
-            margin-top: 8px;
+            margin-top: 20px;
         }
 
         .water-add-btn:hover {
@@ -2466,11 +2727,76 @@
     <!-- Smart Notification Container -->
     <div class="smart-toast-container" id="smartToastContainer"></div>
 
+    <!-- Achievements Bottom Sheet -->
+    <div class="achievements-overlay" id="achievementsOverlay" onclick="closeAchievements()"></div>
+    <div class="achievements-sheet" id="achievementsSheet">
+        <div class="sheet-handle"></div>
+        <div class="achievements-header">
+            <div>
+                <div class="achievements-title">🏅 Achievements</div>
+                <div class="achievements-count" id="achievementsCount">0 / 12 unlocked</div>
+            </div>
+            <button class="sheet-close" onclick="closeAchievements()">✕</button>
+        </div>
+        <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <!-- Water Preset Manager -->
+    <div class="preset-overlay" id="presetOverlay" onclick="closePresetManager()"></div>
+    <div class="preset-sheet" id="presetSheet">
+        <div class="sheet-handle"></div>
+        <div class="achievements-header">
+            <div>
+                <div class="achievements-title" id="presetSheetTitle">💧 Water Presets</div>
+                <div class="achievements-count" id="presetSheetSub">Choose a schedule to apply</div>
+            </div>
+            <button class="sheet-close" onclick="closePresetManager()">✕</button>
+        </div>
+        <div id="presetListView">
+            <div class="preset-list" id="presetList"></div>
+        </div>
+        <div id="presetEditorView" style="display:none">
+            <div class="preset-editor">
+                <div class="preset-field">
+                    <label>Preset Name</label>
+                    <input type="text" id="presetEditorName" placeholder="e.g. Workout Day">
+                </div>
+                <div class="preset-field">
+                    <label>Total Goal (ml)</label>
+                    <input type="number" id="presetEditorGoal" placeholder="2500" min="500" max="6000">
+                </div>
+                <div class="preset-editor-actions">
+                    <button class="preset-cancel-btn" onclick="showPresetList()">Cancel</button>
+                    <button class="preset-save-btn" onclick="savePresetEditor()">Save Preset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preset Apply Confirmation -->
+    <div class="preset-confirm-overlay" id="presetConfirmOverlay">
+        <div class="preset-confirm-card">
+            <div class="preset-confirm-icon">⚠️</div>
+            <div class="preset-confirm-title">Apply New Preset?</div>
+            <div class="preset-confirm-msg">Applying a new preset will reset your current water progress for today. Are you sure?</div>
+            <div class="preset-confirm-actions">
+                <button class="preset-confirm-no" onclick="closePresetConfirm()">Cancel</button>
+                <button class="preset-confirm-yes" id="presetConfirmYes">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Notification -->
+    <div id="globalToast">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <span id="toastMsg">บันทึกแล้ว ✓</span>
+    </div>
+
     <!-- ══════════════════════════════════════════════════════════════
          TOP BAR — Streak + Segmented Control
          ══════════════════════════════════════════════════════════════ -->
     <div class="top-bar">
-        <div style="flex:1"></div>
+        <div style="flex:1"><button class="achievements-btn" onclick="openAchievements()" aria-label="Achievements">🏅<span class="notif-dot" id="badgeNotifDot"></span></button></div>
         <div class="streak-badge" id="streakBadge" onclick="showCelebration()">
             <div class="streak-fire inactive" id="streakFire">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -2719,7 +3045,8 @@
             <button class="reset-btn" onclick="waterResetAll()">🔄 รีเซ็ตสำหรับวันใหม่</button>
 
             <div class="water-schedule-header">
-                <span class="water-schedule-title">📋 ตารางดื่มน้ำ</span>
+                <div><span class="water-schedule-title">📋 ตารางดื่มน้ำ</span><div class="active-preset-pill" id="activePresetPill" style="display:none"></div></div>
+                <button class="water-preset-btn" onclick="openPresetManager()"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Presets</button>
                 <button class="water-edit-btn" id="waterEditToggle" onclick="toggleWaterEditMode()" title="Edit Schedule">
                     <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                 </button>
@@ -2729,16 +3056,14 @@
             <button class="water-add-btn" onclick="addNewTask()">+ เพิ่มรายการใหม่</button>
             <button class="water-reset-schedule" onclick="confirmResetSchedule()">🔄 รีเซ็ตตารางเป็นค่าเริ่มต้น</button>
             <footer>ไม่เกิน 200–250 ml ต่อชั่วโมง&nbsp;·&nbsp;ระหว่าง workout ได้ถึง 500 ml/ชม.</footer>
+
+
         </div>
 
         <!-- ════════════════════════════════════════════════════════
              WORKOUT TRACKER APP (all internals preserved exactly)
              ════════════════════════════════════════════════════════ -->
         <div class="app-view" id="workout-app">
-            <div class="toast" id="toast">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                <span id="toastMsg">บันทึกแล้ว ✓</span>
-            </div>
 
             <div class="page active" id="page-log">
                 <div class="page-header">
@@ -3004,6 +3329,255 @@
         return ml;
     }
 
+    // --- Water Presets System ---
+    const WATER_PRESETS_KEY = 'wt_water_presets';
+    const ACTIVE_PRESET_KEY = 'wt_active_preset';
+
+    const DEFAULT_PRESETS = [
+        {
+            id: 'preset_standard',
+            presetName: 'Standard Day',
+            totalGoal: 2500,
+            tasks: [
+                { id: 'ps1', time: 'ตื่นนอน', name: 'ดื่มก่อนอาหารเช้า', ml: 300, note: 'ร่างกายขาดน้ำหลังนอน 7–8 ชม.' },
+                { id: 'ps2', time: '09:00', name: 'จิบระหว่างเช้า', ml: 200, note: 'ไม่เกิน 200 ml/ชม.' },
+                { id: 'ps3', time: '11:00', name: 'ก่อนมื้อเที่ยง', ml: 200, note: 'ดื่มก่อนกินข้าว 1 ชม.' },
+                { id: 'ps4', time: '12:00', name: 'ระหว่างมื้อเที่ยง', ml: 200, note: 'จิบช้าๆ ระหว่างกิน' },
+                { id: 'ps5', time: '14:00', name: 'บ่าย — แทนกาแฟ', ml: 200, note: 'ช่วงง่วงบ่ายจิบน้ำแทน' },
+                { id: 'ps6', time: '16:00', name: 'บ่ายแก่', ml: 200, note: 'ก่อนเลิกงาน' },
+                { id: 'ps7', time: '18:00', name: 'ก่อนอาหารเย็น', ml: 300, note: 'ดื่มก่อนกิน 30 นาที' },
+                { id: 'ps8', time: '19:30', name: 'หลังอาหารเย็น', ml: 200, note: 'จิบช้าๆ' },
+                { id: 'ps9', time: 'มื้อเย็น', name: 'ระหว่างมื้อเย็น', ml: 200, note: 'จิบช้าๆ ระหว่างกิน' },
+                { id: 'ps10', time: '20:00', name: 'ก่อนนอน', ml: 100, note: 'ไม่เกินนี้ — ป้องกันตื่นกลางดึก' },
+            ]
+        },
+        {
+            id: 'preset_workout',
+            presetName: 'Active Workout Day',
+            totalGoal: 3500,
+            tasks: [
+                { id: 'pw1', time: 'ตื่นนอน', name: 'ดื่มก่อนอาหารเช้า', ml: 300, note: 'ร่างกายขาดน้ำหลังนอน 7–8 ชม.' },
+                { id: 'pw2', time: '09:00', name: 'จิบระหว่างเช้า', ml: 200, note: 'ไม่เกิน 200 ml/ชม.' },
+                { id: 'pw3', time: '11:00', name: 'ก่อนมื้อเที่ยง', ml: 200, note: 'ดื่มก่อนกินข้าว 1 ชม.' },
+                { id: 'pw4', time: '12:00', name: 'ระหว่างมื้อเที่ยง', ml: 200, note: 'จิบช้าๆ ระหว่างกิน' },
+                { id: 'pw5', time: '14:00', name: 'บ่าย — แทนกาแฟ', ml: 200, note: 'ช่วงง่วงบ่ายจิบน้ำแทน' },
+                { id: 'pw6', time: '16:00', name: 'ก่อน workout', ml: 300, note: 'เตรียมร่างกายก่อนออกกำลังกาย', tag: 'GYM' },
+                { id: 'pw7', time: 'Workout', name: 'ระหว่างออกกำลังกาย', ml: 500, note: 'จิบทีละน้อยตลอด session', tag: 'GYM' },
+                { id: 'pw8', time: 'หลัง gym', name: 'หลังออกกำลังกาย', ml: 400, note: 'ภายใน 30 นาที', tag: 'GYM' },
+                { id: 'pw9', time: 'มื้อเย็น', name: 'ระหว่างมื้อเย็น', ml: 200, note: 'จิบช้าๆ ระหว่างกิน' },
+                { id: 'pw10', time: '19:30', name: 'หลังอาหารเย็น', ml: 300, note: 'Recovery hydration' },
+                { id: 'pw11', time: '20:30', name: 'ก่อนนอน', ml: 200, note: 'ไม่เกินนี้ — ป้องกันตื่นกลางดึก' },
+            ]
+        }
+    ];
+
+    function loadWaterPresets() {
+        try {
+            const saved = localStorage.getItem(WATER_PRESETS_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch(e) {}
+        return DEFAULT_PRESETS.map(p => ({...p, tasks: p.tasks.map(t => ({...t}))}));
+    }
+    function saveWaterPresets(presets) { localStorage.setItem(WATER_PRESETS_KEY, JSON.stringify(presets)); }
+
+    function getActivePresetId() {
+        try { return localStorage.getItem(ACTIVE_PRESET_KEY) || null; } catch(e) { return null; }
+    }
+    function setActivePresetId(id) { localStorage.setItem(ACTIVE_PRESET_KEY, id || ''); }
+
+    let presetEditing = null; // null = new, string = editing ID
+
+    function openPresetManager() {
+        showPresetList();
+        document.getElementById('presetOverlay').classList.add('open');
+        requestAnimationFrame(() => document.getElementById('presetSheet').classList.add('open'));
+    }
+    function closePresetManager() {
+        document.getElementById('presetSheet').classList.remove('open');
+        setTimeout(() => document.getElementById('presetOverlay').classList.remove('open'), 400);
+    }
+
+    function showPresetList() {
+        document.getElementById('presetListView').style.display = '';
+        document.getElementById('presetEditorView').style.display = 'none';
+        document.getElementById('presetSheetTitle').textContent = '💧 Water Presets';
+        document.getElementById('presetSheetSub').textContent = 'Choose a schedule to apply';
+        renderPresetList();
+    }
+
+    function renderPresetList() {
+        const presets = loadWaterPresets();
+        const activeId = getActivePresetId();
+        const container = document.getElementById('presetList');
+        const frag = document.createDocumentFragment();
+
+        presets.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'preset-card' + (p.id === activeId ? ' active-preset' : '');
+            const activeBadge = p.id === activeId ? ' <span style="color:var(--w-accent);font-size:0.62rem">✦ Active</span>' : '';
+            card.innerHTML = `
+                <div class="preset-card-header">
+                    <div class="preset-card-name">${p.presetName}${activeBadge}</div>
+                    <div class="preset-card-goal">${p.totalGoal.toLocaleString()} ml</div>
+                </div>
+                <div class="preset-card-meta">${p.tasks.length} tasks · ${p.tasks.reduce((s,t) => s+t.ml, 0).toLocaleString()} ml total</div>
+                <div class="preset-card-actions">
+                    <button class="preset-apply-btn">Apply</button>
+                    <button class="preset-edit-action-btn">Edit</button>
+                    <button class="preset-delete-btn">Delete</button>
+                </div>
+            `;
+            card.querySelector('.preset-apply-btn').addEventListener('click', (e) => { e.stopPropagation(); requestApplyPreset(p.id); });
+            card.querySelector('.preset-edit-action-btn').addEventListener('click', (e) => { e.stopPropagation(); openPresetEditor(p.id); });
+            card.querySelector('.preset-delete-btn').addEventListener('click', (e) => { e.stopPropagation(); deleteWaterPreset(p.id); });
+            frag.appendChild(card);
+        });
+
+        // Create new button
+        const createBtn = document.createElement('button');
+        createBtn.className = 'preset-create-btn';
+        createBtn.textContent = '+ Create New Preset';
+        createBtn.onclick = () => openPresetEditor(null);
+        frag.appendChild(createBtn);
+
+        container.innerHTML = '';
+        container.appendChild(frag);
+
+        gsap.fromTo('#presetList .preset-card', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.06, ease: 'power2.out' });
+    }
+
+    function openPresetEditor(presetId) {
+        presetEditing = presetId;
+        document.getElementById('presetListView').style.display = 'none';
+        document.getElementById('presetEditorView').style.display = '';
+
+        if (presetId) {
+            const presets = loadWaterPresets();
+            const p = presets.find(x => x.id === presetId);
+            if (p) {
+                document.getElementById('presetEditorName').value = p.presetName;
+                document.getElementById('presetEditorGoal').value = p.totalGoal;
+                document.getElementById('presetSheetTitle').textContent = '✏️ Edit Preset';
+                document.getElementById('presetSheetSub').textContent = p.presetName;
+                return;
+            }
+        }
+        document.getElementById('presetEditorName').value = '';
+        document.getElementById('presetEditorGoal').value = '';
+        document.getElementById('presetSheetTitle').textContent = '✨ New Preset';
+        document.getElementById('presetSheetSub').textContent = 'Create from current schedule';
+    }
+
+    function savePresetEditor() {
+        const name = document.getElementById('presetEditorName').value.trim();
+        const goal = parseInt(document.getElementById('presetEditorGoal').value) || 2500;
+        if (!name) {
+            gsap.fromTo('#presetEditorView', { x: -6 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)' });
+            return;
+        }
+
+        const presets = loadWaterPresets();
+
+        if (presetEditing) {
+            const p = presets.find(x => x.id === presetEditing);
+            if (p) {
+                p.presetName = name;
+                p.totalGoal = goal;
+            }
+        } else {
+            // Create new preset from current active water schedule
+            const newPreset = {
+                id: 'preset_' + Date.now(),
+                presetName: name,
+                totalGoal: goal,
+                tasks: waterItems.map(t => ({...t, id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6)}))
+            };
+            presets.push(newPreset);
+        }
+
+        saveWaterPresets(presets);
+        showToast('✓ Preset saved!');
+        showPresetList();
+    }
+
+    function deleteWaterPreset(presetId) {
+        const presets = loadWaterPresets();
+        if (presets.length <= 1) { showToast('ต้องมี preset อย่างน้อย 1 อัน'); return; }
+        const idx = presets.findIndex(x => x.id === presetId);
+        if (idx === -1) return;
+        presets.splice(idx, 1);
+        saveWaterPresets(presets);
+        if (getActivePresetId() === presetId) setActivePresetId('');
+        showToast('Preset deleted');
+        renderPresetList();
+    }
+
+    let pendingPresetId = null;
+
+    function requestApplyPreset(presetId) {
+        // If user has progress, show confirmation
+        if (waterChecked.length > 0) {
+            pendingPresetId = presetId;
+            document.getElementById('presetConfirmOverlay').classList.add('open');
+            gsap.fromTo('.preset-confirm-card', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' });
+            document.getElementById('presetConfirmYes').onclick = () => { closePresetConfirm(); applyPreset(pendingPresetId); };
+            return;
+        }
+        applyPreset(presetId);
+    }
+
+    function closePresetConfirm() {
+        gsap.to('.preset-confirm-card', { scale: 0.8, opacity: 0, duration: 0.25, onComplete: () => {
+            document.getElementById('presetConfirmOverlay').classList.remove('open');
+        }});
+    }
+
+    function applyPreset(presetId) {
+        const presets = loadWaterPresets();
+        const preset = presets.find(x => x.id === presetId);
+        if (!preset) return;
+
+        // Fade out current list
+        gsap.to('#water-app .item', { opacity: 0, y: -10, duration: 0.25, stagger: 0.03, onComplete: () => {
+            // Update water items to preset tasks
+            waterItems = preset.tasks.map(t => ({...t, id: 'w_' + Date.now() + '_' + Math.random().toString(36).slice(2,6)}));
+            waterChecked = [];
+            waterSave();
+            saveWaterSchedule();
+
+            // Update goal
+            const settings = loadAppSettings();
+            settings.goal = preset.totalGoal;
+            saveAppSettings(settings);
+            WATER_TOTAL_GOAL = preset.totalGoal;
+
+            // Mark active
+            setActivePresetId(presetId);
+            updateActivePresetPill();
+
+            // Re-render with staggered fade-in
+            waterRender();
+
+            closePresetManager();
+            showToast('✓ ' + preset.presetName + ' applied!');
+        }});
+    }
+
+    function updateActivePresetPill() {
+        const pill = document.getElementById('activePresetPill');
+        if (!pill) return;
+        const activeId = getActivePresetId();
+        if (!activeId) { pill.style.display = 'none'; return; }
+        const presets = loadWaterPresets();
+        const p = presets.find(x => x.id === activeId);
+        if (p) {
+            pill.textContent = p.presetName;
+            pill.style.display = '';
+        } else {
+            pill.style.display = 'none';
+        }
+    }
+
     // --- Edit Mode ---
     let waterEditMode = false;
 
@@ -3031,13 +3605,16 @@
         deferStorage(() => {
             waterSave();
             if (!wasChecked) recordWaterActivity();
+            if (!wasChecked) incrementBadgeStat('totalWaterLogs', 1);
         });
         if (!wasChecked) {
             const itemIdx = waterItems.findIndex(i => i.id === id);
             const itemEl = document.querySelectorAll('#water-app .item')[itemIdx];
             if (itemEl) waterSpawnParticles(itemEl);
+            // Check if water goal is now met
             if (getWaterMlDone() >= getWaterGoal()) {
                 streakTryExtend('water');
+                incrementBadgeStat('waterGoalsCompleted', 1);
             }
             // Ask for notification permission after first positive interaction
             maybeAskNotifPermission();
@@ -3408,6 +3985,7 @@
         logEntries = []; renderLogEntries(); showToast('✓ บันทึก session แล้ว!');
         // Trigger streak on successful workout save
         streakTryExtend('workout');
+        incrementBadgeStat('totalWorkoutSessions', 1);
     }
 
     function savePresets() { save('wt_presets', presets); }
@@ -3540,7 +4118,7 @@
     }
 
     function showToast(msg) {
-        const el = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg;
+        const el = document.getElementById('globalToast'); document.getElementById('toastMsg').textContent = msg;
         gsap.killTweensOf(el);
         gsap.fromTo(el, { opacity: 0, y: 20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.7)', onStart: () => { el.style.pointerEvents = 'auto'; } });
         gsap.to(el, { opacity: 0, y: 20, scale: 0.9, duration: 0.3, delay: 2, ease: 'power2.in', onComplete: () => { el.style.pointerEvents = 'none'; } });
@@ -3617,6 +4195,7 @@
         }
         saveStreak(data);
         updateStreakUI(data);
+        syncBadgeStreak();
 
         // Show celebration with a small delay so the save toast can appear first
         setTimeout(() => {
@@ -3662,30 +4241,59 @@
         document.getElementById('celebStreak').textContent = data.currentStreak;
         document.getElementById('celebLongest').innerHTML = 'Longest: <strong>' + data.longestStreak + '</strong> days';
 
-        // Perfect week badge
-        const badge = document.getElementById('celebBadge');
-        if (data.currentStreak >= 7 && data.currentStreak % 7 === 0) {
-            badge.classList.add('show');
-            badge.textContent = '⭐ Perfect Week!';
-        } else if (data.currentStreak >= 30 && data.currentStreak % 30 === 0) {
-            badge.classList.add('show');
-            badge.textContent = '🏆 30-Day Legend!';
-        } else {
-            badge.classList.remove('show');
-        }
+        // --- Milestone Tier Detection ---
+        const MILESTONES = [
+            { min: 100, tier: 'diamond', title: '💎 CENTURY MASTER!', badge: '💎 100-Day Legend!' },
+            { min: 75,  tier: 'gold',    title: '👑 LEGENDARY!',      badge: '👑 75-Day Champion!' },
+            { min: 50,  tier: 'silver',  title: '⚡ UNSTOPPABLE!',    badge: '⚡ 50-Day Warrior!' },
+            { min: 25,  tier: 'bronze',  title: '💪 DEDICATED!',      badge: '💪 25 Days Strong!' },
+            { min: 7,   tier: 'starter', title: '🔥 First Streak!',   badge: '⭐ Perfect Week!' },
+        ];
 
-        // Title text variation
-        const titles = ['Streak Extended!', 'Keep it Going! 🔥', 'Unstoppable!', 'You\'re on Fire!'];
-        document.getElementById('celebTitle').textContent = data.currentStreak >= 7
-            ? titles[Math.floor(Math.random() * titles.length)]
-            : 'Streak Extended!';
+        const fireEl = document.querySelector('.celebration-card .celeb-fire');
+        // Remove old tier classes
+        fireEl.className = 'celeb-fire';
+        // Remove old milestone text if any
+        const oldMilestone = document.getElementById('celebMilestoneText');
+        if (oldMilestone) oldMilestone.remove();
+
+        const milestone = MILESTONES.find(m => data.currentStreak >= m.min && data.currentStreak % m.min === 0);
+        const celebBadge = document.getElementById('celebBadge');
+        const celebTitle = document.getElementById('celebTitle');
+
+        if (milestone) {
+            // Apply tier glow to fire icon
+            fireEl.classList.add('tier-' + milestone.tier);
+            celebTitle.textContent = milestone.title;
+
+            // Show milestone badge
+            celebBadge.textContent = milestone.badge;
+            celebBadge.classList.add('show');
+
+            // Add milestone label
+            const milestoneLabel = document.createElement('div');
+            milestoneLabel.id = 'celebMilestoneText';
+            milestoneLabel.className = 'celeb-milestone-text tier-' + milestone.tier;
+            milestoneLabel.textContent = 'MILESTONE';
+            fireEl.parentElement.insertBefore(milestoneLabel, celebTitle);
+
+            // Always confetti for milestones
+            setTimeout(() => launchConfetti(), 300);
+        } else if (data.currentStreak >= 7 && data.currentStreak % 7 === 0) {
+            celebBadge.textContent = '⭐ Perfect Week!';
+            celebBadge.classList.add('show');
+            const titles = ['Streak Extended!', 'Keep it Going! 🔥', 'Unstoppable!', "You're on Fire!"];
+            celebTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
+            setTimeout(() => launchConfetti(), 300);
+        } else {
+            celebBadge.classList.remove('show');
+            const titles = ['Streak Extended!', 'Keep it Going! 🔥', 'Unstoppable!', "You're on Fire!"];
+            celebTitle.textContent = data.currentStreak >= 7
+                ? titles[Math.floor(Math.random() * titles.length)]
+                : 'Streak Extended!';
+        }
 
         overlay.classList.add('show');
-
-        // Confetti for milestones (7, 14, 21, 30, etc.)
-        if (data.currentStreak % 7 === 0 && data.currentStreak > 0) {
-            launchConfetti();
-        }
 
         // GSAP entrance for the card
         gsap.fromTo(overlay.querySelector('.celebration-card'), {
@@ -3771,6 +4379,124 @@
     // ══════════════════════════════════════════════════════════════════
     // SMART NOTIFICATION SYSTEM
     // ══════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════
+    // ACHIEVEMENT & BADGE SYSTEM
+    // ══════════════════════════════════════════════════════════════════
+    const BADGE_STATS_KEY = 'tracker_badge_stats';
+    const BADGES = [
+        { id: 'first_sip',      icon: '💧', name: 'First Sip',       desc: 'Log your first water',       check: s => s.totalWaterLogs >= 1 },
+        { id: 'hydration_hero', icon: '🌊', name: 'Hydration Hero',  desc: 'Complete daily water goal',   check: s => s.waterGoalsCompleted >= 1 },
+        { id: 'iron_lifter',    icon: '🏋️', name: 'Iron Lifter',     desc: 'Save your first workout',     check: s => s.totalWorkoutSessions >= 1 },
+        { id: 'streak_3',       icon: '🔥', name: 'On Fire',         desc: '3-day streak',                check: s => s.longestStreak >= 3 },
+        { id: 'streak_7',       icon: '⭐', name: 'Perfect Week',    desc: '7-day streak',                check: s => s.longestStreak >= 7 },
+        { id: 'streak_25',      icon: '💪', name: 'Dedicated',       desc: '25-day streak',               check: s => s.longestStreak >= 25 },
+        { id: 'streak_50',      icon: '⚡', name: 'Unstoppable',     desc: '50-day streak',               check: s => s.longestStreak >= 50 },
+        { id: 'streak_100',     icon: '💎', name: 'Century Master',  desc: '100-day streak',              check: s => s.longestStreak >= 100 },
+        { id: 'water_10',       icon: '🥤', name: 'Sip Streak',      desc: 'Log water 10 times',          check: s => s.totalWaterLogs >= 10 },
+        { id: 'workout_5',      icon: '💥', name: 'Gym Rat',         desc: 'Save 5 workout sessions',     check: s => s.totalWorkoutSessions >= 5 },
+        { id: 'workout_20',     icon: '🏆', name: 'Iron Legend',     desc: 'Save 20 workout sessions',    check: s => s.totalWorkoutSessions >= 20 },
+        { id: 'water_50',       icon: '🐳', name: 'Whale Mode',      desc: 'Log water 50 times',          check: s => s.totalWaterLogs >= 50 },
+    ];
+
+    function loadBadgeStats() {
+        try {
+            const r = localStorage.getItem(BADGE_STATS_KEY);
+            if (r) return JSON.parse(r);
+        } catch(e) {}
+        return { totalWaterLogs: 0, waterGoalsCompleted: 0, totalWorkoutSessions: 0, longestStreak: 0, unlockedBadges: [] };
+    }
+    function saveBadgeStats(s) { deferStorage(() => localStorage.setItem(BADGE_STATS_KEY, JSON.stringify(s))); }
+
+    function incrementBadgeStat(key, amount) {
+        const stats = loadBadgeStats();
+        stats[key] = (stats[key] || 0) + (amount || 1);
+        // Also sync longest streak from streak system
+        const streakData = loadStreak();
+        stats.longestStreak = Math.max(stats.longestStreak || 0, streakData.longestStreak || 0);
+        saveBadgeStats(stats);
+        checkBadges(stats);
+    }
+
+    function syncBadgeStreak() {
+        const stats = loadBadgeStats();
+        const streakData = loadStreak();
+        stats.longestStreak = Math.max(stats.longestStreak || 0, streakData.longestStreak || 0);
+        saveBadgeStats(stats);
+        checkBadges(stats);
+    }
+
+    function checkBadges(stats) {
+        if (!stats) stats = loadBadgeStats();
+        const unlocked = stats.unlockedBadges || [];
+        let newUnlock = false;
+
+        BADGES.forEach(badge => {
+            if (unlocked.includes(badge.id)) return;
+            if (badge.check(stats)) {
+                unlocked.push(badge.id);
+                newUnlock = true;
+                // Show unlock toast (deferred to not block current animation)
+                setTimeout(() => {
+                    showSmartToast({
+                        type: 'badge',
+                        title: '🏅 Badge Unlocked!',
+                        msg: `${badge.icon} ${badge.name} — ${badge.desc}`,
+                        duration: 5000
+                    });
+                }, 800);
+                // Show notification dot
+                const dot = document.getElementById('badgeNotifDot');
+                if (dot) dot.classList.add('show');
+            }
+        });
+
+        if (newUnlock) {
+            stats.unlockedBadges = unlocked;
+            saveBadgeStats(stats);
+        }
+    }
+
+    function renderBadges() {
+        const stats = loadBadgeStats();
+        const unlocked = stats.unlockedBadges || [];
+        const grid = document.getElementById('badgeGrid');
+        const frag = document.createDocumentFragment();
+
+        BADGES.forEach(badge => {
+            const isUnlocked = unlocked.includes(badge.id);
+            const card = document.createElement('div');
+            card.className = 'badge-card ' + (isUnlocked ? 'unlocked' : 'locked');
+            card.innerHTML = `<span class="badge-icon">${badge.icon}</span><div class="badge-name">${badge.name}</div><div class="badge-desc">${badge.desc}</div>`;
+            frag.appendChild(card);
+        });
+
+        grid.innerHTML = '';
+        grid.appendChild(frag);
+
+        // Update count
+        const countEl = document.getElementById('achievementsCount');
+        if (countEl) countEl.textContent = `${unlocked.length} / ${BADGES.length} unlocked`;
+
+        // Animate unlocked badges
+        gsap.fromTo('#badgeGrid .badge-card.unlocked', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.06, ease: 'back.out(1.5)' });
+        gsap.fromTo('#badgeGrid .badge-card.locked', { opacity: 0 }, { opacity: 0.4, duration: 0.3, stagger: 0.04 });
+    }
+
+    function openAchievements() {
+        // Clear notification dot
+        const dot = document.getElementById('badgeNotifDot');
+        if (dot) dot.classList.remove('show');
+
+        renderBadges();
+        document.getElementById('achievementsOverlay').classList.add('open');
+        requestAnimationFrame(() => document.getElementById('achievementsSheet').classList.add('open'));
+    }
+
+    function closeAchievements() {
+        document.getElementById('achievementsSheet').classList.remove('open');
+        setTimeout(() => document.getElementById('achievementsOverlay').classList.remove('open'), 400);
+    }
+
     const NOTIF_KEY = 'tracker_notif';
     let smartToastQueue = [];
     let smartToastActive = false;
@@ -3785,11 +4511,11 @@
         // opts: { type: 'water'|'streak', title, msg, urgent, duration }
         const container = document.getElementById('smartToastContainer');
         const el = document.createElement('div');
-        el.className = 'smart-toast' + (opts.urgent ? ' urgent' : '');
+        el.className = 'smart-toast' + (opts.urgent ? ' urgent' : '') + (opts.urgentCritical ? ' urgent-critical' : '');
         const duration = opts.duration || 5000;
 
         el.innerHTML = `
-            <div class="smart-toast-icon ${opts.type}">${opts.type === 'water' ? '💧' : '🔥'}</div>
+            <div class="smart-toast-icon ${opts.type}">${opts.type === 'water' ? '💧' : opts.type === 'badge' ? '🏅' : '🔥'}</div>
             <div class="smart-toast-body">
                 <div class="smart-toast-title">${opts.title}</div>
                 <div class="smart-toast-msg">${opts.msg}</div>
@@ -3888,37 +4614,66 @@
     // --- Streak Danger Logic ---
     function checkStreakDanger() {
         const appStg = loadAppSettings();
-        if (!appStg.streakWarnings) return; // Disabled
-        if (isQuietHours()) return; // Respect quiet hours
+        if (!appStg.streakWarnings) return;
+        if (isQuietHours()) return;
 
         const streakData = validateStreak();
-        if (streakData.currentStreak === 0) return; // No streak to protect
-        if (streakData.todayDone || streakData.lastActiveDate === getToday()) return; // Already done
+        if (streakData.currentStreak === 0) return;
+        if (streakData.todayDone || streakData.lastActiveDate === getToday()) return;
 
         const hour = new Date().getHours();
-        if (hour >= 20) { // After 8 PM
-            const state = loadNotifState();
-            const now = Date.now();
-            const lastDanger = state.lastStreakDanger || 0;
-            const oneHour = 60 * 60 * 1000;
+        const state = loadNotifState();
+        const now = Date.now();
+        const lastTier = state.lastEscalationTier || 0;
+        const lastTime = state.lastStreakDanger || 0;
+        const thirtyMin = 30 * 60 * 1000;
 
-            if (now - lastDanger > oneHour) {
-                showSmartToast({
-                    type: 'streak',
-                    title: '🔥 Don\'t lose your streak!',
-                    msg: `Your ${streakData.currentStreak}-day streak is at risk! Complete a task before midnight.`,
-                    urgent: true,
-                    duration: 8000
-                });
-                state.lastStreakDanger = now;
-                saveNotifState(state);
+        // Don't re-show within 30 minutes
+        if (now - lastTime < thirtyMin) return;
 
-                // Also try browser notification
-                sendBrowserNotification(
-                    '🔥 Save your streak!',
-                    `Your ${streakData.currentStreak}-day streak needs you! Complete a task before midnight.`
-                );
-            }
+        let tier = 0;
+        let title, msg, cssClass, duration;
+
+        if (hour >= 22) {
+            tier = 3;
+            title = '🚨 LAST CHANCE';
+            msg = `These reminders don't seem to be working. If you don't log a task in the next 2 hours, your ${streakData.currentStreak}-day streak goes back to ZERO. Your choice.`;
+            cssClass = 'urgent-critical';
+            duration = 12000;
+        } else if (hour >= 18) {
+            tier = 2;
+            title = '⚠️ Streak in Danger!';
+            msg = `Tick-tock. Your ${streakData.currentStreak}-day streak is in danger. Don't let your hard work vanish!`;
+            cssClass = 'urgent';
+            duration = 8000;
+        } else if (hour >= 12) {
+            tier = 1;
+            title = '🌤️ Friendly Reminder';
+            msg = `Time to hydrate and move! Let's keep that ${streakData.currentStreak}-day streak alive.`;
+            cssClass = '';
+            duration = 6000;
+        }
+
+        if (tier === 0) return;
+        if (tier <= lastTier && now - lastTime < 2 * 60 * 60 * 1000) return; // Don't re-show same or lower tier within 2 hrs
+
+        const toastEl = document.createElement('div');
+        showSmartToast({
+            type: 'streak',
+            title: title,
+            msg: msg,
+            urgent: cssClass === 'urgent',
+            urgentCritical: cssClass === 'urgent-critical',
+            duration: duration
+        });
+
+        state.lastStreakDanger = now;
+        state.lastEscalationTier = tier;
+        saveNotifState(state);
+
+        // Also send browser notification for tier 2+
+        if (tier >= 2) {
+            sendBrowserNotification(title, msg);
         }
     }
 
@@ -4338,6 +5093,10 @@
 
         // Initialize streak UI
         updateStreakUI();
+
+        // Initialize badge system
+        checkBadges();
+        updateActivePresetPill();
 
         // Defer non-critical work until after splash screen completes
         setTimeout(() => {
